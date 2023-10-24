@@ -1,0 +1,129 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.NewsArticles>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.PropertyEditors.ValueConverters
+@{
+	Layout = "Main.cshtml";
+
+    var articles = Umbraco.ContentAtRoot().DescendantsOrSelfOfType("newsArticles").FirstOrDefault();
+    var news = articles.Children;
+    if (!string.IsNullOrEmpty(Context.Request.Query["cat"]))
+    {
+        news = articles.Children.Where(x => x.Value<string[]>("newsCategories").Any(x=> x.Contains(Context.Request.Query["cat"])));
+    }
+
+    var pageSize = 2;
+    var numberOfPages = (int)Math.Ceiling((double)news.Count() / (double)pageSize);
+    var selectedPage = 1;
+    if (!string.IsNullOrEmpty(Context.Request.Query["page"]))
+    {
+        int.TryParse(Context.Request.Query["page"], out selectedPage);
+        if (selectedPage <= 0 || selectedPage > numberOfPages)
+        {
+            selectedPage = 1;
+        }
+    }
+
+    news = news.Skip((selectedPage - 1) * pageSize).Take(pageSize).ToList();
+
+    var heroOverlayColour = Model.Value<string>("heroOverlayColour");
+
+    var tags = articles.Children.Select(v => v.Value<string[]>("newsCategories"));
+    var categoryList = new List<string>();
+    foreach (var tagArray in tags)
+    {
+        foreach (var tag in tagArray)
+        {
+            if (!categoryList.Contains(tag))
+            {
+                categoryList.Add(tag);
+            }
+        }
+    }
+}
+@section head
+{
+    <style>
+        .card-horizontal {
+            display: flex;
+            flex: 1 1 auto;
+        }
+        .active a {
+            color: white;
+        }
+    </style>    
+}
+
+@if (!string.IsNullOrEmpty(heroOverlayColour))
+{
+    <style>
+        .home-bg > .overlay {
+            background-color: #@heroOverlayColour !important;
+            opacity: 0.5;
+        }
+    </style>
+}
+
+@await Component.InvokeAsync("HeaderView")
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 bg-light p-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col p-0">
+                        @foreach (var article in news.OrderByDescending(o => o.Value<DateTime>("postDate")))
+                        {
+                            var imgCropper = article.Value<ImageCropperValue>("articleImage");
+                            var thumbUrl = imgCropper.Src;
+                            <div class="card mt-25 mb-25">
+                                <a class="card-block stretched-link text-decoration-none" href="@article.Url()">
+                                    <div class="card-horizontal">
+                                        <div class="img-square-wrapper" style="width: 24rem;">
+                                            <img src="@thumbUrl" class="card-img-top">
+                                        </div>
+                                        <div class="card-body">
+                                            <h4 class="card-title pb-25">@article.Name</h4>
+                                            <p class="card-text">@article.Value("leadIn")</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+                @if (numberOfPages > 1)
+                {
+                    <div class="row">
+                        <div class="col">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <li class="page-item @(selectedPage <= 1 ? "disabled" : "")"><a class="page-link" href="@(Model.Url() + "?page=" + (selectedPage - 1))">Previous</a></li>
+                                    @for (int i = 1; i <= numberOfPages; i++)
+                                    {
+                                        <li class="page-item @(selectedPage == i ? "active" : "")"><a class="page-link" href="@(Model.Url() + "?page=" + i)">@i</a></li>
+                                    }
+                                    <li class="page-item @(selectedPage >= numberOfPages ? "disabled" : "")"><a class="page-link" href="@(Model.Url() + "?page=" + (selectedPage + 1))">Next</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="col-md-4 bg-dark text-white text-center">
+            <h3>Categories</h3>
+            <ul>
+                @foreach (var category in categoryList.OrderBy(o => o))
+                {
+                    var activeClass = "";
+                    if (category == Context.Request.Query["cat"])
+                    {
+                        activeClass = "active";
+                    }
+                    <li class="@activeClass"><a href="@Model.Url()?cat=@category">@category</a></li>
+                }
+                <a href="@Model.Url()" class="btn btn-primary">Clear Filter</a>
+            </ul>
+        </div>
+    </div>
+</div>

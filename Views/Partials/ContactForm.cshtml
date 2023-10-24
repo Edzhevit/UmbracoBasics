@@ -1,0 +1,55 @@
+﻿@model UmbracoDemo.Core.ViewModel.ContactFormViewModel
+@using UmbracoDemo.Core.Controllers
+
+@* <script src="https://www.google.com/recaptcha/api.js?render=@Model.RecaptchaSiteKey"></script> *@
+@* <script> *@
+@*     grecaptcha.ready(function() { *@
+@*         grecaptcha.execute('@Model.RecaptchaSiteKey', { action: 'contact_us' }) *@
+@*             .then(function(token) { $('#GoogleCaptchaToken').val(token) }); *@
+@*     }) *@
+@* </script> *@
+@if ((string)TempData["status"] == "OK")
+{
+    <text>
+        <div class="container">
+            <div class="row">
+                <div class="col text-center p-5">
+                    <i class="far fa-5x fa-thumbs-up"></i>
+                    <div>Thanks for your comments.</div>
+                </div>
+            </div>
+        </div>
+    </text>
+}
+else
+{
+    @using (Html.BeginUmbracoForm<ContactFormController>(nameof(ContactFormController.Submit)))
+    {
+        <div class="form-group">
+            <label for="your-name-textbox">Your name *</label>
+            <span class="field-validation-valid" asp-validation-for="Name"></span>
+            <input class="form-control form-control-lg" placeholder="Your Name" maxlength="80" asp-for="Name"/>
+
+        </div>
+        <div class="form-group">
+            <label asp-for="EmailAddress">Your Email *</label>
+            <span class="field-validation-valid" asp-validation-for="EmailAddress"></span>
+            <input class="form-control form-control-lg" placeholder="Your Email" maxlength="80" asp-for="EmailAddress"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="Subject">Subject of enquiry</label>
+            <span class="field-validation-valid"></span>
+            <input class="form-control form-control-lg" placeholder="Subject of enquiry" maxlength="255" asp-for="Subject"/>
+        </div>
+        <div class="form-group">
+            <label asp-for="Comment">Comments</label>
+            <span class="field-validation-valid"></span>
+            <textarea class="form-control form-control-lg" placeholder="Your comments" maxlength="500" asp-for="Comment"></textarea>
+        </div>
+        <br/>
+        @* <input type="hidden" name="GoogleCaptchaToken" id="GoogleCaptchaToken" /> *@
+        <div class="form-group">
+            <button class="btn btn-outline-primary btn-lg" type="submit">Send</button>
+        </div>
+    }
+}

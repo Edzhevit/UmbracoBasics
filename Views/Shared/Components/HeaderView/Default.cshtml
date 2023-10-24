@@ -1,0 +1,14 @@
+﻿@model UmbracoDemo.Core.ViewModel.HeaderViewModel
+
+@if (Model != null)
+{
+    <div class="p-5 home-bg" style="background-image:url(@Model.ImageUrl)">
+        <div class="overlay"></div>
+        <div class="inner">
+            <div class="container">
+                <h1 class="display-4">@Model.Title</h1>
+                <span class="display-6">@Model.SubTitle</span>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,28 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.ContentPage>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+	Layout = "Main.cshtml";
+
+    var heroOverlayColour = Model.Value<string>("heroOverlayColour");
+}
+@if (!string.IsNullOrEmpty(heroOverlayColour))
+{
+    <style>
+        .home-bg > .overlay {
+            background-color: #@heroOverlayColour !important;
+            opacity: 0.5;
+        }
+    </style>
+}
+@await Component.InvokeAsync("HeaderView")
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col">
+            @if(Model.HasValue("pageContent")) {
+                @Model.Value("pageContent")
+            }
+        </div>
+    </div>
+</div>
+@await Html.GetBlockGridHtmlAsync(Model, "contentGrid")

@@ -1,0 +1,27 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Home>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@{
+	Layout = "Main.cshtml";
+}
+
+@await Component.InvokeAsync("HeaderView")
+
+@await Html.PartialAsync("CallToAction")
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col">
+            @await Html.PartialAsync("LatestNews")
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col">
+            @await Umbraco.RenderMacroAsync("GetLatestTweets", new { twitterHandle = "Username" })
+        </div>
+    </div>
+</div>

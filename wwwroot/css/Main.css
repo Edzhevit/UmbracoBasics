@@ -1,0 +1,26 @@
+.card-deck {
+    display: flex;
+    justify-content: space-between;
+}
+.home-bg {
+    background: no-repeat center center;
+    background-attachment: scroll;
+    position: relative;
+    background-size: cover;
+    color: white;
+}
+
+.home-bg > .overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(31, 3, 103, 0.80);
+    z-index: 1;
+}
+
+.home-bg > .inner {
+    position: relative;
+    z-index: 2;
+}

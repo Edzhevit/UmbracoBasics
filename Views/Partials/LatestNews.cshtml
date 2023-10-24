@@ -1,0 +1,36 @@
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using Umbraco.Cms.Core.PropertyEditors.ValueConverters
+
+@{
+	var selection = Umbraco.Content(Guid.Parse("80970b9c-e42e-43bf-a884-991891d2740f"))
+    .ChildrenOfType("newsArticle")
+    .Where(x => x.IsVisible())
+    .OrderByDescending(x => x.CreateDate)
+    .Take(3);
+}
+
+
+<div class="card-deck">
+    @foreach (var item in selection)
+    {
+        var imgCropper = item.Value<ImageCropperValue>("articleImage");
+        var thumbUrl = imgCropper.Src;
+        <div class="card" style="width: 24rem;">
+          <img src="@thumbUrl" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">@item.Name</h5>
+            <p class="card-text">@item.Value("leadIn")</p>
+          </div>
+          <div class="card-footer d-flex justify-content-between">
+              <div>
+                  <a href="@item.Url()">Read More</a>
+              </div>
+              <div class="social-icons text-muted">
+                  <a class="ms-2 mr-2" href="#"><i class="fab fa-twitter"></i></a>
+                  <a class="ms-2 mr-2" href="#"><i class="fab fa-facebook"></i></a>
+                  <a class="ms-2 mr-2" href="#"><i class="fab fa-linkedin"></i></a>
+              </div>
+          </div>
+        </div>
+    }
+</div>

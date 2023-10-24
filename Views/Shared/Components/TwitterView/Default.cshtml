@@ -1,0 +1,45 @@
+﻿@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@using System.Globalization
+@model UmbracoDemo.Core.ViewModel.TwitterViewModel
+
+@{
+    JObject json = JsonConvert.DeserializeObject(Model.Json) as JObject;
+}
+
+<section class="container">
+    <div class="row">
+        <div class="col">
+            <h2>Latest Tweets for @Model.TwitterHandle</h2>
+            <div class="card-deck">
+                @for(var i = 0; i < 3; i++)
+                {
+                    var createdDate = DateTime.ParseExact(json["created_at"].ToString(), "ddd MMM dd HH:mm:ss +ffff yyyy", CultureInfo.InvariantCulture);
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div>
+                                <div>
+                                    <strong>Umbraco Demo</strong>
+                                    @@@Model.TwitterHandle
+                                </div>
+                            </div>
+                            <div>
+                                <i class="fab fa-twitter fa-2x"></i>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            @json["text"]
+                        </div>
+                        <div class="card-footer d-flex justify-content-between">
+                            <a href="https://twitter.com" class="stretched-link">Read more</a>
+                            <text>
+                                @Html.Raw(createdDate.ToString("d MMM"))
+                            </text>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

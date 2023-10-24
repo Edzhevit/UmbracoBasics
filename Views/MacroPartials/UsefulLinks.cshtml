@@ -1,0 +1,24 @@
+﻿@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.Blocks
+@inherits Umbraco.Cms.Web.Common.Macros.PartialViewMacroPage
+
+@{
+    var usefulLinks = Model.Content.Value<IEnumerable<BlockListItem>>("linkNestedContent").Select(x => x.Content);
+}
+
+@if (usefulLinks != null)
+{
+    <h2>Useful Links</h2>
+    <ul>
+        @foreach (var link in usefulLinks)
+        {
+            var url = link.Value<Link>("linkUrl").Url;
+            <li>
+                <a href="@url">
+                    <i class="@link.Value("linkIcon")"></i>
+                    @link.Value("linkText")
+                </a>
+            </li>
+        }
+    </ul>
+}
